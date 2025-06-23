@@ -16,8 +16,6 @@ A website for sharing locations among friends and communities.
 - React Leaflet
 - Supabase
 
-## Getting Started
-
 ### Prerequisites
 
 - Node.js and npm installed
