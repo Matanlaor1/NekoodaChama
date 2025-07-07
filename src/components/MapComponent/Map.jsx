@@ -53,6 +53,7 @@ export default function Map() {
   const [isSelecting, setIsSelecting] = useState(false);
   const [selectedPlace, setSelectedPlace] = useState(null);
   const [showForm, setShowForm] = useState(false);
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
     async function fetchPlaces() {
@@ -64,7 +65,13 @@ export default function Map() {
         setPlaces(data);
       }
     }
-
+    const fetchUser = async () => {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      setUser(session?.user ?? null);
+    };
+    fetchUser();
     fetchPlaces();
   }, []);
 
@@ -86,6 +93,19 @@ export default function Map() {
     setShowForm(false);
     setSelectedPlace(null);
   }
+
+  const handleDeletePlace = async (placeId) => {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this place? This action cannot be undone."
+    );
+    if (!confirmDelete) return;
+    const { error } = await supabase.from("Places").delete().eq("id", placeId);
+    if (error) {
+      console.error("Error deleting place:", error);
+    } else {
+      setPlaces(places.filter((place) => place.id !== placeId));
+    }
+  };
 
   return (
     <>
@@ -194,6 +214,15 @@ export default function Map() {
               {place.description}
               <br />
               <em style={{ fontWeight: 200 }}>Category: {place.category}</em>
+              <br />
+              {place.creator_id === user?.id && (
+                <button
+                  className="delete-button"
+                  onClick={() => handleDeletePlace(place.id)}
+                >
+                  Delete
+                </button>
+              )}
             </Popup>
           </Marker>
         ))}

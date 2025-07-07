@@ -8,6 +8,10 @@ A website for sharing locations among friends and communities.
 - Show your current location
 - See how many places you added
 
+## Authentication
+
+User authentication is handled through **Supabase Auth**, allowing users to securely sign up, log in, and manage their session.
+
 ## Tech Used
 
 - Vite

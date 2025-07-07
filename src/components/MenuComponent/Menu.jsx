@@ -33,7 +33,9 @@ export default function Menu({ user, onLogout }) {
       {isOpen && (
         <div className="menu-content">
           <h2 className="menu-title">Welcome, {user.email}</h2>
-          <p className="locations-count">Total Locations: {locationsCount}</p>
+          <p className="locations-count">
+            Total locations added by you: {locationsCount}
+          </p>
           <button className="logout-button" onClick={onLogout}>
             Logout
           </button>
