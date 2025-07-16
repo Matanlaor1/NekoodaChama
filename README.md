@@ -16,6 +16,7 @@ User authentication is handled through **Supabase Auth**, allowing users to secu
 
 - Vite
 - React
+- Tailwind CSS
 - Node.js
 - React Leaflet
 - Supabase

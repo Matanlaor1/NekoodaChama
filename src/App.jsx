@@ -5,10 +5,12 @@ import { supabase } from "./supabase";
 import Map from "./components/MapComponent/Map";
 import Auth from "./components/Auth/Auth";
 import Menu from "./components/MenuComponent/Menu";
+import SearchBar from "./components/SearchBarComponent/SearchBar";
 
 export default function App() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [coords, setCoords] = useState([51.505, -0.09]);
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null);
@@ -42,7 +44,8 @@ export default function App() {
   return (
     <div className="App">
       <Menu user={user} onLogout={handleLogout} />
-      <Map />
+      <SearchBar onLocationSelect={(coords) => setCoords(coords)} />
+      <Map coords={coords} />
     </div>
   );
 }

@@ -10,6 +10,7 @@ import { useState, useEffect } from "react";
 import L from "leaflet";
 import { supabase } from "../../supabase";
 import "./Map.css";
+import MapUpdater from "./MapUpdater";
 
 const customIcon = L.icon({
   iconUrl: "public/custom-map-marker.png",
@@ -42,13 +43,16 @@ function LocationButton() {
     );
   };
   return (
-    <button className="location-button" onClick={handleLocationClick}>
+    <button
+      className="fixed bottom-4 left-4 z-500 p-3 rounded-full bg-orange-500 text-white shadow-lg hover:bg-orange-600 transition"
+      onClick={handleLocationClick}
+    >
       📍
     </button>
   );
 }
 
-export default function Map() {
+export default function Map({ coords }) {
   const [places, setPlaces] = useState([]);
   const [isSelecting, setIsSelecting] = useState(false);
   const [selectedPlace, setSelectedPlace] = useState(null);
@@ -112,11 +116,15 @@ export default function Map() {
       <MapContainer
         center={[32.0853, 34.7818]}
         zoom={10}
-        style={{ height: "100vh", width: "100%" }}
+        style={{ height: "100vh", width: "100%", zIndex: 0 }}
       >
-        <button className="add-place-button" onClick={handleAddPlaceClick}>
+        <button
+          className="fixed bottom-5 right-4 z-500 px-4 py-2 rounded-full bg-orange-500 text-white font-semibold shadow-lg hover:bg-orange-600 transition"
+          onClick={handleAddPlaceClick}
+        >
           {isSelecting ? "Stop Adding Place" : "Add Place"}
         </button>
+
         {showForm && selectedPlace && (
           <div className={`add-place-form ${showForm ? "show" : ""}`}>
             <h3>Add New Place</h3>
@@ -127,68 +135,83 @@ export default function Map() {
             <form
               onSubmit={async (e) => {
                 e.preventDefault();
-                const name = e.target.name.value;
-                const description = e.target.description.value;
-
-                const {
-                  data: { user },
-                } = await supabase.auth.getUser();
-
-                const { data, error } = await supabase
-                  .from("Places")
-                  .insert([
-                    {
-                      name,
-                      description,
-                      category: e.target.category.value,
-                      lat: selectedPlace.lat,
-                      lng: selectedPlace.lng,
-                      creator_id: user.id,
-                    },
-                  ])
-                  .select();
-
-                if (error) {
-                  console.error("Error adding place:", error);
-                } else {
-                  setPlaces([...places, data[0]]);
-                  handleFormClose();
-                }
               }}
+              className="max-w-md mx-auto p-6 bg-white rounded-md shadow-md border border-gray-200"
             >
-              <div>
-                <label>
+              <div className="mb-4">
+                <label
+                  className="block text-gray-700 font-semibold mb-1"
+                  htmlFor="name"
+                >
                   Name:
-                  <input type="text" name="name" required />
                 </label>
+                <input
+                  id="name"
+                  name="name"
+                  type="text"
+                  required
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+                />
               </div>
-              <div>
-                <label>
+
+              <div className="mb-4">
+                <label
+                  className="block text-gray-700 font-semibold mb-1"
+                  htmlFor="description"
+                >
                   Description:
-                  <textarea name="description" required />
                 </label>
+                <textarea
+                  id="description"
+                  name="description"
+                  required
+                  rows={4}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 resize-none"
+                />
               </div>
-              <div>
-                <label>
+
+              <div className="mb-6">
+                <label
+                  className="block text-gray-700 font-semibold mb-1"
+                  htmlFor="category"
+                >
                   Category:
-                  <select name="category" required>
-                    <option value="" disabled>
-                      Select a category
-                    </option>
-                    <option value="Food">Food</option>
-                    <option value="Shopping">Shopping</option>
-                    <option value="Entertainment">Entertainment</option>
-                    <option value="Nature">Nature</option>
-                    <option value="Health">Health</option>
-                    <option value="Education">Education</option>
-                    <option value="Other">Other</option>
-                  </select>
                 </label>
+                <select
+                  id="category"
+                  name="category"
+                  required
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+                  defaultValue=""
+                >
+                  <option value="" disabled>
+                    Select a category
+                  </option>
+                  <option>Food</option>
+                  <option>Shopping</option>
+                  <option>Entertainment</option>
+                  <option>Nature</option>
+                  <option>Health</option>
+                  <option>Education</option>
+                  <option>Other</option>
+                </select>
               </div>
-              <button type="submit">Save Place</button>
-              <button type="button" onClick={handleFormClose}>
-                Cancel
-              </button>
+
+              <div className="flex gap-4">
+                <button
+                  type="submit"
+                  className="flex-1 h-10 bg-orange-500 text-white font-semibold py-2 rounded-md shadow hover:bg-orange-600 transition"
+                >
+                  Save Place
+                </button>
+                <button
+                  type="button"
+                  onClick={handleFormClose}
+                  className="flex-1 h-10 border border-gray-300 rounded-md py-2 font-semibold hover:bg-gray-100 transition"
+                >
+                  Cancel
+                </button>
+              </div>
             </form>
           </div>
         )}
@@ -226,6 +249,7 @@ export default function Map() {
             </Popup>
           </Marker>
         ))}
+        {coords && <MapUpdater coords={coords} />}
       </MapContainer>
     </>
   );

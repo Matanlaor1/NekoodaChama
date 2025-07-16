@@ -1,3 +1,5 @@
+@import "tailwindcss";
+
 .add-place-button {
   background-color: #3b82f6;
   position: absolute;

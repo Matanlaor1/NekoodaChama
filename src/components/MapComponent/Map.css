@@ -1,3 +1,5 @@
+@import "tailwindcss";
+
 .add-place-form {
   position: fixed;
   right: 0;
