@@ -10,7 +10,7 @@ import SearchBar from "./components/SearchBarComponent/SearchBar";
 export default function App() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [coords, setCoords] = useState([51.505, -0.09]);
+  const [coords, setCoords] = useState([32.0853, 34.7818]);
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null);
