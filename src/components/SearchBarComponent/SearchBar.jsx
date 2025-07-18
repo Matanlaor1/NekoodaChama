@@ -34,7 +34,7 @@ export default function SearchBar({ onLocationSelect }) {
     onLocationSelect([parseFloat(location.lat), parseFloat(location.lon)]);
   };
   return (
-    <div className="fixed top-4 left-1/2 transform -translate-x-1/2 w-full max-w-md z-50">
+    <div className="fixed top-2 w-3/4 left-1/2 transform -translate-x-1/2 max-w-md z-50">
       <input
         type="text"
         value={query}
